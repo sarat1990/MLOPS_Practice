@@ -6,7 +6,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 
-def run_training():
+#################
+def training():
     # 1. Generate Synthetic Data
     # 20 features, 1000 samples
     X, y = make_classification(n_samples=1000, n_features=20, n_classes=2, random_state=42)
@@ -46,4 +47,4 @@ def run_training():
     print("Model and scaler saved to 'logistic_model.pkl'")
 
 if __name__ == "__main__":
-    run_training()
+    training()
