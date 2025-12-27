@@ -40,14 +40,6 @@ jobs:
         run: |
           python train.py
 
-      - name: Move model into folder
-        run: |
-          if [ -f "$MODEL_FILE" ]; then
-            mv "$MODEL_FILE" "$MODEL_DIR"/
-          else
-            echo "Model file '$MODEL_FILE' not found!" && exit 1
-          fi
-
       - name: Verify model artifact
         run: |
           ls -lah "$MODEL_DIR"
