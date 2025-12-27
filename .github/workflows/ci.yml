@@ -1,28 +1,61 @@
-name: CI - train  and  save  model
+
+name: CI - train and save model
 
 on:
   push:
-    branches:  [main]
+    branches: [ main ]
+
 jobs:
   matrix-pip:
-    name:Train  and save  model
+    name: Train and save model
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        python: 3.11
+        python-version: [ '3.11' ]
+
+    env:
+      MODEL_DIR: models
+      MODEL_FILE: logistic_model.pkl
 
     steps:
-      -name: Checkout
-       uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      -name: Setup Python
-       uses: actions/setup-python@v4
-       with:
-         python-version:  ${{matrix.python}}
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix['python-version'] }}
 
-      -name: Install project dependencies
-       run: python -m pip install -r requirements.txt
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
 
-      -name:  Train model
-       run: |
-         python train.python
+      - name: Ensure model folder exists
+        run: |
+          mkdir -p "$MODEL_DIR"
+
+      - name: Train model
+        run: |
+          python train.py
+
+      - name: Move model into folder
+        run: |
+          if [ -f "$MODEL_FILE" ]; then
+            mv "$MODEL_FILE" "$MODEL_DIR"/
+          else
+            echo "Model file '$MODEL_FILE' not found!" && exit 1
+          fi
+
+      - name: Verify model artifact
+        run: |
+          ls -lah "$MODEL_DIR"
+          test -f "$MODEL_DIR/$MODEL_FILE" && echo "Model file found in $MODEL_DIR." || (echo "Model file not found in $MODEL_DIR!" && exit 1)
+
+      - name: Upload trained model folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: trained-model
+          path: ${{ env.MODEL_DIR }}
+          if-no-files-found: error

@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 
-def train_and_save_model(output_dir="artifacts", output_file="iris_logistic_model.pkl"):
+def train_and_save_model(output_dir="artifacts", output_file="logistic_model.pkl"):
     # 1. Load Iris dataset
     iris = load_iris()
     X, y = iris.data, iris.target
